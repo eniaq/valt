@@ -1,0 +1,5 @@
+= valt
+
+*valt* is an npm CLI tool for managing secrets and parameters in your projects.
+It integrates with AWS Secrets Manager and is designed to work seamlessly in
+both development and production environments.

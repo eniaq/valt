@@ -1,0 +1,28 @@
+{
+  "name": "valt",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "bin": {
+    "valt": "./dist/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eniaq/valt.git"
+  },
+  "author": "ENIAQ inc",
+  "bugs": {
+    "url": "https://github.com/eniaq/valt/issues"
+  },
+  "homepage": "https://github.com/eniaq/valt#readme",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  }
+}

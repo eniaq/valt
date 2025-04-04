@@ -1,0 +1,34 @@
+{
+  "folders": [
+    {
+      "path": "."
+    }
+  ],
+  "extensions": {
+    "recommendations": [
+      "streetsidesoftware.code-spell-checker",
+      "esbenp.prettier-vscode",
+    ]
+  },
+  "settings": {
+    "files.insertFinalNewline": true,
+    "editor.formatOnSave": true,
+    "files.watcherExclude": {
+      "**/node_modules/**": true,
+      "**/.next/**": true,
+      "**/.git/objects/**": true,
+      "**/.git/subtree-cache/**": true,
+    },
+    "[typescript][typescriptreact]": {
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "always"
+    },
+    "typescript.tsdk": "node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+    "cSpell.words": [
+      "valt"
+    ],
+  },
+}
