@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../valt.schema.json
+
+version: "0.1"
+
+defaults:
+  vault:
+    - provider: aws
+      secret: default-secret
+
+env:
+  NO_OVERRIDE:
+    description: "Test"
+  OVERRIDE:
+    vault:
+      - provider: aws
+        secret: override-secret
+  SET_KEY:
+    vault:
+      - provider: aws
+        secret: override-secret
+        key: test-key
+  SET_DOTENV:
+    vault:
+      - provider: dotenv
+        file: .env
+        variable: test-variable

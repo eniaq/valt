@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../valt.schema.json
+
+version: "0.1"
+
+env:
+  REQUIRED:
+    default: "required"
+    policy: "required"
+  OPTIONAL:
+    default: "optional"
+    policy: "optional"
+  IGNORE:
+    default: "ignore"
+    policy: "ignore"
+  NOT_SPECIFIED:
+    default: "not-specified"
+    policy:
+      unused: "ignore"
+  PROD_IGNORE:
+    default: "prod-required"
+    policy:
+      test: "required"
+      prod: "ignore"

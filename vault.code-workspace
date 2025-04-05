@@ -8,6 +8,7 @@
     "recommendations": [
       "streetsidesoftware.code-spell-checker",
       "esbenp.prettier-vscode",
+      "redhat.vscode-yaml",
     ]
   },
   "settings": {
@@ -19,8 +20,13 @@
       "**/.git/objects/**": true,
       "**/.git/subtree-cache/**": true,
     },
-    "[typescript][typescriptreact]": {
+    "[typescript][typescriptreact][json]": {
       "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2,
+      "editor.autoIndent": "keep",
     },
     "editor.codeActionsOnSave": {
       "source.fixAll.eslint": "always"
@@ -28,6 +34,7 @@
     "typescript.tsdk": "node_modules/typescript/lib",
     "typescript.enablePromptUseWorkspaceTsdk": true,
     "cSpell.words": [
+      "dotenv",
       "valt"
     ],
   },

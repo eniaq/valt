@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../valt.schema.json
+
+version: "0.1"
+
+defaults:
+  vault:
+    profile1:
+      - provider: aws
+        secret: profile1-default-secret
+        key: profile1-default-key
+      - provider: dotenv
+        file: profile1-default-file
+        variable: profile1-default-variable
+    profile2:
+      - provider: aws
+        secret: profile2-default-secret
+        key: profile2-default-key
+      - provider: dotenv
+        file: profile2-default-file
+        variable: profile2-default-variable
+
+env:
+  OVERRIDE_PROFILE1:
+    default:
+      profile1: "profile1-default-value"
+    vault:
+      profile1:
+        - provider: aws
+          secret: profile1-override-secret
+          key: profile1-override-key
+        - provider: dotenv
+          file: profile1-override-file
+          variable: profile1-override-variable
+      profile3:
+        - provider: aws
+          secret: profile3-override-secret
+          key: profile3-override-key

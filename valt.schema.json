@@ -1,0 +1,169 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/eniaq/valt/blob/main/valt.schema.json",
+  "title": "valt",
+  "description": "Schema for valt configuration files.",
+  "type": "object",
+  "properties": {
+    "version": {
+      "enum": ["0.1"],
+      "type": "string",
+      "description": "The version of the valt configuration schema."
+    },
+    "defaults": {
+      "type": "object",
+      "properties": {
+        "vault": {
+          "description": "Base vault configuration used as the default for environment variables, unless overridden individually.",
+          "$ref": "#/$defs/profile-vault-spec"
+        },
+        "profile": {
+          "type": "string",
+          "description": "The default profile to use for the environment variables."
+        }
+      }
+    },
+    "env": {
+      "type": "object",
+      "description": "Environment variable definitions.",
+      "patternProperties": {
+        "^[a-zA-Z0-9_]+$": {
+          "type": "object",
+          "properties": {
+            "vault": {
+              "$ref": "#/$defs/profile-vault-spec"
+            },
+            "default": {
+              "description": "The default value for the environment variable.",
+              "$ref": "#/$defs/profile-default-spec"
+            },
+            "description": {
+              "type": "string",
+              "description": "The description of the environment variable."
+            },
+            "policy": {
+              "$ref": "#/$defs/profile-policy-spec"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+
+  "required": ["version", "env"],
+  "additionalProperties": false,
+
+  "$defs": {
+    "profile-default-spec": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "profile-policy-spec": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/policy-spec"
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/policy-spec"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "policy-spec": {
+      "type": "string",
+      "enum": ["required", "optional", "ignore"],
+      "description": "The policy for the environment variable.",
+      "default": "required"
+    },
+    "profile-vault-spec": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/vault-spec"
+        },
+        {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/$defs/vault-spec"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "vault-spec": {
+      "type": "array",
+      "description": "List of vault to be used. The order of items does not matter.",
+      "items": {
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/$defs/aws-vault-spec"
+          },
+          {
+            "$ref": "#/$defs/dotenv-vault-spec"
+          }
+        ]
+      }
+    },
+    "aws-vault-spec": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "enum": ["aws"],
+          "type": "string",
+          "description": "Type of the secret manager to use"
+        },
+        "secret": {
+          "type": "string",
+          "description": "Name of the secret in the secret manager."
+        },
+        "key": {
+          "type": "string",
+          "description": "Key within the secret from which to retrieve the value. If not specified, the name of the environment variable being set will be used."
+        }
+      },
+      "additionalProperties": false,
+      "required": ["provider"]
+    },
+    "dotenv-vault-spec": {
+      "type": "object",
+      "properties": {
+        "provider": {
+          "enum": ["dotenv"],
+          "type": "string",
+          "description": "Type of the secret manager to use."
+        },
+        "file": {
+          "type": "string",
+          "description": "Path to the dotenv file, either absolute or relative to the directory where `valt` is executed."
+        },
+        "variable": {
+          "type": "string",
+          "description": "Name of the environment variable in the dotenv file from which to retrieve the value. If not specified, the name of the environment variable being set will be used."
+        }
+      },
+      "additionalProperties": false,
+      "required": ["provider"]
+    }
+  }
+}

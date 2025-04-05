@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../valt.schema.json
+
+version: "0.1"
+
+defaults:
+  profile: prod
+  vault:
+    prod:
+      - provider: aws
+        secret: valt-test
+    local:
+      - provider: dotenv
+        file: test/.env
+      - provider: aws
+        secret: valt-test
+    test:
+      - provider: dotenv
+        file: test/.env
+
+env:
+  TEST:
+    description: "Test environment"
+    default: "test"
+    policy: required
+  HELLO:
+    description: "Test environment"
+    default: "hello"
+    policy:
+      local: ignore
+  GOOD:
+    description: "Test environment"
+    default: "test"
+    policy: required
