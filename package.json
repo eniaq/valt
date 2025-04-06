@@ -1,8 +1,7 @@
 {
-  "name": "valt",
+  "name": "valt-cli",
   "version": "0.1.0",
-  "private": true,
-  "main": "index.js",
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
@@ -10,7 +9,7 @@
     "test": "jest"
   },
   "bin": {
-    "valt": "./dist/index.js"
+    "valt": "dist/index.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +20,7 @@
     "url": "https://github.com/eniaq/valt/issues"
   },
   "homepage": "https://github.com/eniaq/valt#readme",
-  "description": "",
+  "description": "CLI tool for managing secrets and parameters in your projects, integrating with AWS Secrets Manager.",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.14.0",
