@@ -43,11 +43,13 @@ export type ShowOptions = {
   config?: string;
   profile?: string;
   format?: "table" | "dotenv" | "auto";
+  show?: boolean;
 };
 
 program
   .option("-c, --config <config>", "path to the config file")
   .option("-p, --profile <profile>", "profile name")
+  .option("-s, --show", "show secrets (only for table format)")
   .addOption(
     new Option("-f, --format <format>", "output format")
       .choices(["table", "dotenv", "auto"])

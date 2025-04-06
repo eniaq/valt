@@ -20,7 +20,7 @@ export class Printer {
     }
   }
 
-  public static printTable(values: VaultValue[]) {
+  public static printTable(values: VaultValue[], show: boolean = false) {
     Log.info("");
 
     const table = new CliTable3({
@@ -29,11 +29,12 @@ export class Printer {
     });
 
     for (const value of values) {
+      let secret = show ? value.value : "****";
       switch (value.type) {
         case "aws":
           table.push([
             chalk.bold(value.name),
-            chalk.bold.green(value.value),
+            chalk.bold.green(secret),
             "aws",
             `${value.secret}:${value.key}`,
           ]);
@@ -41,23 +42,19 @@ export class Printer {
         case "dotenv":
           table.push([
             chalk.bold(value.name),
-            chalk.green(value.value),
+            chalk.green(secret),
             "dotenv",
             `${value.file}:${value.variable}`,
           ]);
           break;
         case "default":
-          table.push([chalk.bold(value.name), value.value, "default", ""]);
+          table.push([chalk.bold(value.name), secret, "default", ""]);
           break;
         case "env":
-          table.push([
-            chalk.bold(value.name),
-            chalk.grey(value.value),
-            "local env",
-          ]);
+          table.push([chalk.bold(value.name), chalk.grey(secret), "local env"]);
           break;
         case "empty":
-          table.push([chalk.bold(value.name), chalk.grey("<empty>"), "", ""]);
+          table.push([chalk.bold(value.name), chalk.grey("<unset>"), "", ""]);
           break;
       }
     }

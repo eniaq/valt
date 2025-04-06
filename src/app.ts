@@ -62,11 +62,11 @@ export class App {
     }
 
     if (options.format === "table") {
-      Printer.printTable(values);
+      Printer.printTable(values, options.show ?? false);
     } else if (options.format === "dotenv") {
       Printer.printDotenv(values);
     } else if (process.stdout.isTTY) {
-      Printer.printTable(values);
+      Printer.printTable(values, options.show ?? false);
     } else {
       Printer.printDotenv(values);
     }

@@ -69,12 +69,9 @@ export class AWSVault {
       head: ["", this.name],
     });
 
-    table.push([
-      chalk.bold.green("Before"),
-      prevValue === undefined ? "<empty>" : prevValue,
-    ]);
+    table.push([chalk.bold.green("Before"), prevValue ?? "<unset>"]);
 
-    table.push([chalk.bold.green("After"), value ? value : "<empty>"]);
+    table.push([chalk.bold.green("After"), value ?? "<unset>"]);
 
     Log.info("");
     Log.info(`🔑 Changing secret value for '${this.key}' in '${this.secret}'`);
