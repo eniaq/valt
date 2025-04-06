@@ -1,6 +1,6 @@
 {
   "name": "valt-cli",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
@@ -8,6 +8,13 @@
     "gen-schema-type": "./tools/generate-schema-type.sh",
     "test": "jest"
   },
+  "keywords": [
+    "cli",
+    "env",
+    "dotenv",
+    "aws",
+    "Secrets Manager"
+  ],
   "bin": {
     "valt": "dist/index.js"
   },
