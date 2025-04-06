@@ -55,6 +55,15 @@ export class App {
         continue;
       }
 
+      if (policy === "required") {
+        throw new ValtError(
+          `The value for '${name}' is required but could not be found.`,
+          {
+            hint: "Ensure your configuration file and secrets manager are set up correctly.",
+          }
+        );
+      }
+
       values.push({
         type: "empty",
         name: name,
@@ -63,11 +72,11 @@ export class App {
     }
 
     if (options.format === "table") {
-      Printer.printTable(values, options.show ?? false);
+      Printer.printTable(values, resolver.profile, options.show ?? false);
     } else if (options.format === "dotenv") {
       Printer.printDotenv(values);
     } else if (process.stdout.isTTY) {
-      Printer.printTable(values, options.show ?? false);
+      Printer.printTable(values, resolver.profile, options.show ?? false);
     } else {
       Printer.printDotenv(values);
     }

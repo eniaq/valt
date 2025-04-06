@@ -30,25 +30,36 @@ export class Resolver {
 
     var awsSecret: string | undefined = undefined;
     var awsKey: string = env;
+    var awsEnabled = true;
     var dotenvFile: string | undefined = undefined;
     var dotenvVariable: string = env;
+    var dotenvEnabled = true;
 
     for (const vault of vaults) {
       if (vault.provider === "aws") {
         if (vault.secret) awsSecret = vault.secret;
         if (vault.key) awsKey = vault.key;
+        if (vault.enabled !== undefined) awsEnabled = vault.enabled;
       } else if (vault.provider === "dotenv") {
         if (vault.file) dotenvFile = vault.file;
         if (vault.variable) dotenvVariable = vault.variable;
+        if (vault.enabled !== undefined) dotenvEnabled = vault.enabled;
       }
     }
 
+    let aws: AWSVault | undefined = undefined;
+    if (awsEnabled && awsSecret && awsKey) {
+      aws = new AWSVault(env, awsSecret, awsKey);
+    }
+
+    let dotenv: DotenvVault | undefined = undefined;
+    if (dotenvEnabled && dotenvFile) {
+      dotenv = new DotenvVault(env, dotenvFile, dotenvVariable);
+    }
+
     return {
-      aws:
-        awsSecret && awsKey ? new AWSVault(env, awsSecret, awsKey) : undefined,
-      dotenv: dotenvFile
-        ? new DotenvVault(env, dotenvFile, dotenvVariable)
-        : undefined,
+      aws,
+      dotenv,
       defaultValue: this.resolveDefaultValue(env),
       policy: this.resolvePolicy(env),
     };

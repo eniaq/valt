@@ -133,6 +133,11 @@
           "type": "string",
           "description": "Type of the secret manager to use"
         },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to enable this provider. Defaults to true.",
+          "default": true
+        },
         "secret": {
           "type": "string",
           "description": "Name of the secret in the secret manager."
@@ -152,6 +157,11 @@
           "enum": ["dotenv"],
           "type": "string",
           "description": "Type of the secret manager to use."
+        },
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether to enable this provider. Defaults to true.",
+          "default": true
         },
         "file": {
           "type": "string",

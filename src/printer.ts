@@ -20,9 +20,14 @@ export class Printer {
     }
   }
 
-  public static printTable(values: VaultValue[], show: boolean = false) {
+  public static printTable(
+    values: VaultValue[],
+    profile: string,
+    show: boolean = false
+  ) {
     Log.info("");
 
+    Log.info(`Profile: ${chalk.bold.green(profile)}`);
     const table = new CliTable3({
       head: ["Name", "Value", "Provider", "Info"],
       style: { head: [] },
