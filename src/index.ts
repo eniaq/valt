@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { program } from "commander";
+import { Option, program } from "commander";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { App } from "./app";
@@ -23,7 +23,7 @@ const runner = async (block: () => void | Promise<void>) => {
         Log.info(`${error.hint}`);
       }
       if (error.debug) {
-        Log.debug(`${error.debug}`);
+        Log.debug(`[DEBUG] ${error.debug}`);
       }
     } else if (error instanceof Error) {
       Log.error(`${error.message}`);
@@ -42,14 +42,37 @@ program
 export type ShowOptions = {
   config?: string;
   profile?: string;
+  format?: "table" | "dotenv" | "auto";
 };
 
 program
-  .option("--config [config]")
-  .option("--profile [profile]")
+  .option("-c, --config <config>", "path to the config file")
+  .option("-p, --profile <profile>", "profile name")
+  .addOption(
+    new Option("-f, --format <format>", "output format")
+      .choices(["table", "dotenv", "auto"])
+      .default("auto")
+  )
   .action((options: ShowOptions) => {
-    runner(() => {
-      App.show(options);
+    runner(async () => {
+      await App.show(options);
+    });
+  });
+
+export type SetOptions = {
+  config?: string;
+  profile?: string;
+  name: string;
+  value?: string;
+};
+
+program
+  .command("set <name> [value]")
+  .option("-c, --config <config>", "path to the config file")
+  .option("-p, --profile <profile>", "profile name")
+  .action((name: string, value: string | undefined, options: SetOptions) => {
+    runner(async () => {
+      await App.set(name, value ?? null, options);
     });
   });
 

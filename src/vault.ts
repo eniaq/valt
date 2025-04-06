@@ -1,13 +1,27 @@
-export class AWSVault {
-  type = "aws";
+import { AWSVaultValue } from "./aws-vault";
+import { DotenvVaultValue } from "./dotenv-vault";
 
-  constructor(public readonly secret: string, public readonly key: string) {}
-}
+export type DefaultValue = {
+  type: "default";
+  name: string;
+  value: string;
+};
 
-export class DotenvVault {
-  type = "dotenv";
+export type EnvValue = {
+  type: "env";
+  name: string;
+  value: string;
+};
 
-  constructor(public readonly file: string, public readonly variable: string) {}
-}
+export type EmptyValue = {
+  type: "empty";
+  name: string;
+  value: undefined;
+};
 
-export type Vault = AWSVault | DotenvVault;
+export type VaultValue =
+  | AWSVaultValue
+  | DotenvVaultValue
+  | DefaultValue
+  | EnvValue
+  | EmptyValue;

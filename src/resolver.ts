@@ -1,6 +1,7 @@
+import { AWSVault } from "./aws-vault";
 import { Config } from "./config";
+import { DotenvVault } from "./dotenv-vault";
 import { ValtError } from "./error";
-import { AWSVault, DotenvVault, Vault } from "./vault";
 
 export class Resolver {
   profile: string;
@@ -43,12 +44,11 @@ export class Resolver {
     }
 
     return {
-      aws: awsSecret && awsKey ? new AWSVault(awsSecret, awsKey) : undefined,
-      dotenv:
-        dotenvFile && dotenvVariable
-          ? new DotenvVault(dotenvFile, dotenvVariable)
-          : undefined,
+      aws:
+        awsSecret && awsKey ? new AWSVault(env, awsSecret, awsKey) : undefined,
+      dotenv: new DotenvVault(env, dotenvFile, dotenvVariable),
       defaultValue: this.resolveDefaultValue(env),
+      policy: this.resolvePolicy(env),
     };
   };
 
@@ -72,12 +72,19 @@ export class Resolver {
 
   private resolveLocalEnvVaults = (env: string) => {
     if (!this.envs.includes(env)) {
-      throw new ValtError(
-        `Environment '${env}' not found in '${this.config.path}`,
-        {
-          hint: `Please check the config file for the correct environment name.`,
-        }
-      );
+      if (this.config.env[env]) {
+        throw new ValtError(
+          `Environment '${env}' is ignored in '${this.config.path}`,
+          { hint: "This environment variable is ignored by the config." }
+        );
+      } else {
+        throw new ValtError(
+          `Environment '${env}' not found in '${this.config.path}`,
+          {
+            hint: "Please check the config file for the correct environment name.",
+          }
+        );
+      }
     }
 
     const vaults = this.config.env[env].vault;
