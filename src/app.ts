@@ -4,6 +4,7 @@ import { Resolver } from "./resolver";
 import { VaultValue } from "./vault";
 import { Printer } from "./printer";
 import { ValtError } from "./error";
+import fs from "fs/promises";
 
 export class App {
   public static async show(options: ShowOptions) {
@@ -76,6 +77,13 @@ export class App {
     value: string | null,
     options: SetOptions
   ) {
+    if (options.file) {
+      if (value) {
+        throw new ValtError("Cannot set both value and file");
+      }
+      value = await fs.readFile(options.file, "utf-8");
+    }
+
     let config = new Config(options);
     let resolver = new Resolver(config, options);
 

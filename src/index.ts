@@ -64,12 +64,14 @@ export type SetOptions = {
   profile?: string;
   name: string;
   value?: string;
+  file?: string;
 };
 
 program
   .command("set <name> [value]")
   .option("-c, --config <config>", "path to the config file")
   .option("-p, --profile <profile>", "profile name")
+  .option("--file <file>", "read value from file")
   .action((name: string, value: string | undefined, options: SetOptions) => {
     runner(async () => {
       await App.set(name, value ?? null, options);
