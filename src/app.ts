@@ -17,11 +17,12 @@ export class App {
     for (const name of resolver.envs) {
       const { aws, dotenv, defaultValue, policy } = resolver.resolveVault(name);
 
-      const dotenvValue = dotenv.getValue();
-
-      if (dotenvValue) {
-        values.push(dotenvValue);
-        continue;
+      if (dotenv) {
+        const dotenvValue = dotenv.getValue();
+        if (dotenvValue) {
+          values.push(dotenvValue);
+          continue;
+        }
       }
 
       if (aws) {

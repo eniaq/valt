@@ -46,7 +46,9 @@ export class Resolver {
     return {
       aws:
         awsSecret && awsKey ? new AWSVault(env, awsSecret, awsKey) : undefined,
-      dotenv: new DotenvVault(env, dotenvFile, dotenvVariable),
+      dotenv: dotenvFile
+        ? new DotenvVault(env, dotenvFile, dotenvVariable)
+        : undefined,
       defaultValue: this.resolveDefaultValue(env),
       policy: this.resolvePolicy(env),
     };

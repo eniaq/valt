@@ -15,7 +15,7 @@ export class DotenvVault {
 
   constructor(
     public readonly name: string,
-    public readonly file: string | undefined,
+    public readonly file: string,
     public readonly variable: string
   ) {}
 

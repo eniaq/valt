@@ -56,12 +56,12 @@ describe("Resolver", () => {
 
       const noVault = resolver.resolveVault("NO_VAULT");
       expect(noVault.aws).toBeUndefined();
-      expect(noVault.dotenv).not.toBeUndefined();
+      expect(noVault.dotenv).toBeUndefined();
       expect(noVault.defaultValue).toBeUndefined();
 
       const onlyDefault = resolver.resolveVault("ONLY_DEFAULT");
       expect(onlyDefault.aws).toBeUndefined();
-      expect(onlyDefault.dotenv).not.toBeUndefined();
+      expect(onlyDefault.dotenv).toBeUndefined();
       expect(onlyDefault.defaultValue).toBe("default-value");
 
       const onlyDotenv = resolver.resolveVault("ONLY_DOTENV");
@@ -71,7 +71,7 @@ describe("Resolver", () => {
 
       const onlyAWS = resolver.resolveVault("ONLY_AWS");
       expect(onlyAWS.aws).not.toBeUndefined();
-      expect(onlyAWS.dotenv).not.toBeUndefined();
+      expect(onlyAWS.dotenv).toBeUndefined();
       expect(onlyAWS.defaultValue).toBeUndefined();
 
       const both = resolver.resolveVault("BOTH");
@@ -90,28 +90,28 @@ describe("Resolver", () => {
       expect(noOverride.aws).not.toBeUndefined();
       expect(noOverride.aws?.secret).toBe("default-secret");
       expect(noOverride.aws?.key).toBe("NO_OVERRIDE");
-      expect(noOverride.dotenv).not.toBeUndefined();
+      expect(noOverride.dotenv).toBeUndefined();
       expect(noOverride.defaultValue).toBeUndefined();
 
       const override = resolver.resolveVault("OVERRIDE");
       expect(override.aws).not.toBeUndefined();
       expect(override.aws?.secret).toBe("override-secret");
       expect(override.aws?.key).toBe("OVERRIDE");
-      expect(override.dotenv).not.toBeUndefined();
+      expect(override.dotenv).toBeUndefined();
       expect(override.defaultValue).toBeUndefined();
 
       const setKey = resolver.resolveVault("SET_KEY");
       expect(setKey.aws).not.toBeUndefined();
       expect(setKey.aws?.secret).toBe("override-secret");
       expect(setKey.aws?.key).toBe("test-key");
-      expect(setKey.dotenv).not.toBeUndefined();
+      expect(setKey.dotenv).toBeUndefined();
       expect(setKey.defaultValue).toBeUndefined();
 
       const setDotenv = resolver.resolveVault("SET_DOTENV");
       expect(setDotenv.aws).not.toBeUndefined();
       expect(setDotenv.dotenv).not.toBeUndefined();
-      expect(setDotenv.dotenv.file).toBe(".env");
-      expect(setDotenv.dotenv.variable).toBe("test-variable");
+      expect(setDotenv.dotenv?.file).toBe(".env");
+      expect(setDotenv.dotenv?.variable).toBe("test-variable");
       expect(setDotenv.defaultValue).toBeUndefined();
     });
   });
@@ -125,8 +125,8 @@ describe("Resolver", () => {
 
       expect(result1.aws?.secret).toBe("profile1-override-secret");
       expect(result1.aws?.key).toBe("profile1-override-key");
-      expect(result1.dotenv.file).toBe("profile1-override-file");
-      expect(result1.dotenv.variable).toBe("profile1-override-variable");
+      expect(result1.dotenv?.file).toBe("profile1-override-file");
+      expect(result1.dotenv?.variable).toBe("profile1-override-variable");
       expect(result1.defaultValue).toBe("profile1-default-value");
 
       const resolver2 = new Resolver(config, { profile: "profile2" });
@@ -134,8 +134,8 @@ describe("Resolver", () => {
 
       expect(result2.aws?.secret).toBe("profile2-default-secret");
       expect(result2.aws?.key).toBe("profile2-default-key");
-      expect(result2.dotenv.file).toBe("profile2-default-file");
-      expect(result2.dotenv.variable).toBe("profile2-default-variable");
+      expect(result2.dotenv?.file).toBe("profile2-default-file");
+      expect(result2.dotenv?.variable).toBe("profile2-default-variable");
       expect(result2.defaultValue).toBeUndefined();
 
       const resolver3 = new Resolver(config, { profile: "profile3" });
@@ -143,8 +143,7 @@ describe("Resolver", () => {
 
       expect(result3.aws?.secret).toBe("profile3-override-secret");
       expect(result3.aws?.key).toBe("profile3-override-key");
-      expect(result3.dotenv.file).toBeUndefined();
-      expect(result3.dotenv.variable).toBe("OVERRIDE_PROFILE1");
+      expect(result3.dotenv).toBeUndefined();
       expect(result3.defaultValue).toBeUndefined();
     });
   });
