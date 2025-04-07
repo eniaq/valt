@@ -28,6 +28,7 @@ export class Resolver {
     const globalVaults = this.resolveGlobalVaults();
     const vaults = [...(globalVaults ?? []), ...(localVaults ?? [])];
 
+    let awsRegion: string | undefined = undefined;
     let awsSecret: string | undefined = undefined;
     let awsKey: string = env;
     let awsEnabled = true;
@@ -37,6 +38,7 @@ export class Resolver {
 
     for (const vault of vaults) {
       if (vault.provider === "aws") {
+        if (vault.region) awsRegion = vault.region;
         if (vault.secret) awsSecret = vault.secret;
         if (vault.key) awsKey = vault.key;
         if (vault.enabled !== undefined) awsEnabled = vault.enabled;
@@ -49,7 +51,7 @@ export class Resolver {
 
     let aws: AWSVault | undefined = undefined;
     if (awsEnabled && awsSecret && awsKey) {
-      aws = new AWSVault(env, awsSecret, awsKey);
+      aws = new AWSVault(env, awsRegion, awsSecret, awsKey);
     }
 
     let dotenv: DotenvVault | undefined = undefined;

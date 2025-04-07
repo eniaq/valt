@@ -137,6 +137,10 @@
           "description": "Whether to enable this provider. Defaults to true.",
           "default": true
         },
+        "region": {
+          "type": "string",
+          "description": "AWS region where the secret is stored."
+        },
         "secret": {
           "type": "string",
           "description": "Name of the secret in the secret manager."

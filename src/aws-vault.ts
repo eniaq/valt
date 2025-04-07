@@ -23,14 +23,18 @@ export class AWSVault {
 
   private client: SecretsManagerClient;
 
-  private static cache: Record<string, Record<string, unknown>> = {};
+  private static cache: Record<
+    string,
+    Record<string, Record<string, unknown>>
+  > = {}; // {region: {secret: {key: value}}}
 
   constructor(
     public readonly name: string,
+    public readonly region: string | undefined,
     public readonly secret: string,
     public readonly key: string
   ) {
-    this.client = new SecretsManagerClient();
+    this.client = new SecretsManagerClient({ region });
   }
 
   getValue = async (): Promise<AWSVaultValue> => {
@@ -134,8 +138,9 @@ export class AWSVault {
   };
 
   private getSecret = async (): Promise<Record<string, unknown>> => {
-    if (this.secret in AWSVault.cache) {
-      return AWSVault.cache[this.secret];
+    const cache = AWSVault.getCache(this.region, this.secret);
+    if (cache) {
+      return cache;
     }
 
     const command = new GetSecretValueCommand({ SecretId: this.secret });
@@ -171,7 +176,7 @@ export class AWSVault {
 
     if (typeof data === "object" && data) {
       const object = data as Record<string, unknown>;
-      AWSVault.cache[this.secret] = object;
+      AWSVault.setCache(this.region, this.secret, object);
 
       return object;
     }
@@ -179,5 +184,27 @@ export class AWSVault {
     throw new ValtError(`Secret value is not an object for ${this.secret}`, {
       hint: "Check if the secret value is a valid JSON string.",
     });
+  };
+
+  private static getCache = (region: string | undefined, secret: string) => {
+    let regionKey = region ?? "";
+    if (regionKey in this.cache && secret in this.cache[regionKey]) {
+      return this.cache[regionKey][secret];
+    }
+
+    return undefined;
+  };
+
+  private static setCache = (
+    region: string | undefined,
+    secret: string,
+    value: Record<string, unknown>
+  ) => {
+    let regionKey = region ?? "";
+    if (!(regionKey in this.cache)) {
+      this.cache[regionKey] = {};
+    }
+
+    this.cache[regionKey][secret] = value;
   };
 }
