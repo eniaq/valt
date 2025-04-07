@@ -16,7 +16,13 @@ export class Printer {
             console.log(`${value.name}="${value.value}"`);
           }
         } else {
-          console.log(`${value.name}=${value.value}`);
+          if (!value.value.includes('"')) {
+            console.log(`${value.name}="${value.value}"`);
+          } else if (!value.value.includes("'")) {
+            console.log(`${value.name}='${value.value}'`);
+          } else {
+            console.log(`${value.name}=${value.value}`);
+          }
         }
       }
     }
