@@ -19,33 +19,53 @@ describe("Resolver", () => {
     });
   });
 
-  describe("when try to resolve a ignored env", () => {
+  describe("when try to resolve a disabled env", () => {
     it("throws an error", () => {
-      const config = new Config({ config: "test/configs/policy-test.yaml" });
+      const config = new Config({ config: "test/configs/disabled-test.yaml" });
       const resolver = new Resolver(config, { profile: "test" });
-      expect(() => resolver.resolveVault("IGNORE")).toThrow(
-        "Environment 'IGNORE' is ignored"
+      expect(() => resolver.resolveVault("DISABLED")).toThrow(
+        "Environment 'DISABLED' is disabled"
       );
     });
   });
 
-  describe("when policy specified", () => {
-    it("ignores variables with `ignore` policy", () => {
-      const config = new Config({ config: "test/configs/policy-test.yaml" });
+  describe("when `disabled` specified", () => {
+    it("ignores variables with `ignore` option", () => {
+      const config = new Config({ config: "test/configs/disabled-test.yaml" });
 
       const test = new Resolver(config, { profile: "test" });
-      expect(test.envs).toContain("REQUIRED");
-      expect(test.envs).toContain("OPTIONAL");
-      expect(test.envs).not.toContain("IGNORE");
+      expect(test.envs).not.toContain("DISABLED");
+      expect(test.envs).toContain("ENABLED");
       expect(test.envs).toContain("NOT_SPECIFIED");
-      expect(test.envs).toContain("PROD_IGNORE");
+      expect(test.envs).toContain("PROD_DISABLED");
+      expect(test.envs).toContain("PROD_ENABLED");
 
       const prod = new Resolver(config, { profile: "prod" });
-      expect(prod.envs).toContain("REQUIRED");
-      expect(prod.envs).toContain("OPTIONAL");
-      expect(prod.envs).not.toContain("IGNORE");
+      expect(prod.envs).not.toContain("DISABLED");
+      expect(prod.envs).toContain("ENABLED");
       expect(prod.envs).toContain("NOT_SPECIFIED");
-      expect(prod.envs).not.toContain("PROD_IGNORE");
+      expect(prod.envs).not.toContain("PROD_DISABLED");
+      expect(prod.envs).toContain("PROD_ENABLED");
+    });
+  });
+
+  describe("when `optional` specified", () => {
+    it("", () => {
+      const config = new Config({ config: "test/configs/optional-test.yaml" });
+
+      const test = new Resolver(config, { profile: "test" });
+      expect(test.resolveVault("REQUIRED").required).toBe(true);
+      expect(test.resolveVault("OPTIONAL").required).toBe(false);
+      expect(test.resolveVault("NOT_SPECIFIED").required).toBe(true);
+      expect(test.resolveVault("PROD_REQUIRED").required).toBe(true);
+      expect(test.resolveVault("PROD_OPTIONAL").required).toBe(true);
+
+      const prod = new Resolver(config, { profile: "prod" });
+      expect(prod.resolveVault("REQUIRED").required).toBe(true);
+      expect(prod.resolveVault("OPTIONAL").required).toBe(false);
+      expect(prod.resolveVault("NOT_SPECIFIED").required).toBe(true);
+      expect(prod.resolveVault("PROD_REQUIRED").required).toBe(true);
+      expect(prod.resolveVault("PROD_OPTIONAL").required).toBe(false);
     });
   });
 

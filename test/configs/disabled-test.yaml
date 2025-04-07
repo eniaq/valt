@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../valt.schema.json
+
+version: "0.1"
+
+env:
+  DISABLED:
+    default: "disabled"
+    disabled: true
+  ENABLED:
+    default: "enabled"
+    disabled: false
+  NOT_SPECIFIED:
+    default: "not-specified"
+  PROD_DISABLED:
+    default: "prod-disabled"
+    disabled:
+      prod: true
+  PROD_ENABLED:
+    default: "prod-enabled"
+    disabled:
+      prod: false

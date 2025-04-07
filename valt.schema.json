@@ -41,8 +41,13 @@
               "type": "string",
               "description": "The description of the environment variable."
             },
-            "policy": {
-              "$ref": "#/$defs/profile-policy-spec"
+            "optional": {
+              "description": "Whether the environment variable is optional. Defaults to false.",
+              "$ref": "#/$defs/profile-boolean-spec"
+            },
+            "disabled": {
+              "description": "Whether to ignore the environment variable. Defaults to false.",
+              "$ref": "#/$defs/profile-boolean-spec"
             }
           },
           "additionalProperties": false
@@ -72,27 +77,21 @@
         }
       ]
     },
-    "profile-policy-spec": {
+    "profile-boolean-spec": {
       "oneOf": [
         {
-          "$ref": "#/$defs/policy-spec"
+          "type": "boolean"
         },
         {
           "type": "object",
           "patternProperties": {
             ".*": {
-              "$ref": "#/$defs/policy-spec"
+              "type": "boolean"
             }
           },
           "additionalProperties": false
         }
       ]
-    },
-    "policy-spec": {
-      "type": "string",
-      "enum": ["required", "optional", "ignore"],
-      "description": "The policy for the environment variable.",
-      "default": "required"
     },
     "profile-vault-spec": {
       "oneOf": [

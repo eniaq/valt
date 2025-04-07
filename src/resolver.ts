@@ -8,7 +8,7 @@ export class Resolver {
 
   get envs(): string[] {
     return Object.keys(this.config.env).filter(
-      (envName) => this.resolvePolicy(envName) !== "ignore"
+      (envName) => !this.resolveDisabled(envName)
     );
   }
 
@@ -61,7 +61,7 @@ export class Resolver {
       aws,
       dotenv,
       defaultValue: this.resolveDefaultValue(env),
-      policy: this.resolvePolicy(env),
+      required: !this.resolveOptional(env),
     };
   };
 
@@ -87,7 +87,7 @@ export class Resolver {
     if (!this.envs.includes(env)) {
       if (this.config.env[env]) {
         throw new ValtError(
-          `Environment '${env}' is ignored in '${this.config.path}`,
+          `Environment '${env}' is disabled in '${this.config.path}`,
           { hint: "This environment variable is ignored by the config." }
         );
       } else {
@@ -135,21 +135,33 @@ export class Resolver {
     return undefined;
   };
 
-  private resolvePolicy = (env: string): "required" | "optional" | "ignore" => {
-    let policyConfig = this.config.env[env].policy;
+  private resolveOptional = (env: string): boolean => {
+    return this.resolveBoolean(env, "optional", false);
+  };
 
-    if (policyConfig === undefined) {
-      return "required";
+  private resolveDisabled = (env: string): boolean => {
+    return this.resolveBoolean(env, "disabled", false);
+  };
+
+  private resolveBoolean = (
+    env: string,
+    param: "optional" | "disabled",
+    defaultValue: boolean
+  ): boolean => {
+    let config = this.config.env[env][param];
+
+    if (config === undefined) {
+      return defaultValue;
     }
 
-    if (typeof policyConfig === "string") {
-      return policyConfig;
+    if (typeof config === "boolean") {
+      return config;
     }
 
-    if (this.profile in policyConfig) {
-      return policyConfig[this.profile];
+    if (this.profile in config) {
+      return config[this.profile];
     } else {
-      return "required";
+      return defaultValue;
     }
   };
 }

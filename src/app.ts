@@ -18,7 +18,8 @@ export class App {
 
     let awsError: unknown;
     for (const name of resolver.envs) {
-      const { aws, dotenv, defaultValue, policy } = resolver.resolveVault(name);
+      const { aws, dotenv, defaultValue, required } =
+        resolver.resolveVault(name);
 
       if (dotenv) {
         const dotenvValue = dotenv.getValue();
@@ -46,7 +47,7 @@ export class App {
         continue;
       }
 
-      if (policy === "required") {
+      if (required) {
         values.push({
           type: "error",
           name: name,

@@ -5,19 +5,17 @@ version: "0.1"
 env:
   REQUIRED:
     default: "required"
-    policy: "required"
+    optional: false
   OPTIONAL:
     default: "optional"
-    policy: "optional"
-  IGNORE:
-    default: "ignore"
-    policy: "ignore"
+    optional: true
   NOT_SPECIFIED:
     default: "not-specified"
-    policy:
-      unused: "ignore"
-  PROD_IGNORE:
+  PROD_REQUIRED:
     default: "prod-required"
-    policy:
-      test: "required"
-      prod: "ignore"
+    optional:
+      prod: false
+  PROD_OPTIONAL:
+    default: "prod-optional"
+    optional:
+      prod: true
