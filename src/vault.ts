@@ -7,10 +7,10 @@ export type DefaultValue = {
   value: string;
 };
 
-export type EnvValue = {
-  type: "env";
+export type ErrorValue = {
+  type: "error";
   name: string;
-  value: string;
+  value: undefined;
 };
 
 export type EmptyValue = {
@@ -23,5 +23,5 @@ export type VaultValue =
   | AWSVaultValue
   | DotenvVaultValue
   | DefaultValue
-  | EnvValue
-  | EmptyValue;
+  | EmptyValue
+  | ErrorValue;

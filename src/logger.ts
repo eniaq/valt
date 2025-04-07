@@ -13,13 +13,13 @@ export class Log {
 
   static debug(log: string) {
     if (this.color) {
-      console.debug(chalk.gray(log));
+      console.error(chalk.gray(log));
     } else {
-      console.debug(log);
+      console.error(log);
     }
   }
 
   static info(log: string) {
-    console.info(log);
+    console.error(log);
   }
 }

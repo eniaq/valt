@@ -1,6 +1,7 @@
 import {
   GetSecretValueCommand,
   PutSecretValueCommand,
+  ResourceNotFoundException,
   SecretsManagerClient,
 } from "@aws-sdk/client-secrets-manager";
 import { ValtError } from "./error";
@@ -57,7 +58,10 @@ export class AWSVault {
     );
   };
 
-  setValue = async (value: string | null) => {
+  setValue = async (
+    value: string | null,
+    show: { before: boolean; after: boolean }
+  ) => {
     const secret = await this.getSecret();
 
     const prevValue = secret[this.key] as string | undefined;
@@ -69,15 +73,28 @@ export class AWSVault {
       head: ["", this.name],
     });
 
-    table.push([chalk.bold.green("Before"), prevValue ?? "<unset>"]);
+    const mask = (value: string | undefined | null, show: boolean) => {
+      if (value === undefined || value === null) return "<unset>";
+      if (!show) {
+        const lines = value.split("\n").length;
+        if (lines > 1) {
+          return `**** (${lines} lines)`;
+        } else {
+          return "****";
+        }
+      }
+      return value;
+    };
 
-    table.push([chalk.bold.green("After"), value ?? "<unset>"]);
+    table.push([chalk.bold.green("Before"), mask(prevValue, show.before)]);
+
+    table.push([chalk.bold.green("After"), mask(value, show.after)]);
 
     Log.info("");
     Log.info(`🔑 Changing secret value for '${this.key}' in '${this.secret}'`);
     Log.info("");
 
-    console.log(table.toString());
+    console.error(table.toString());
 
     const rl = readline.createInterface({
       input: process.stdin,
@@ -128,10 +145,14 @@ export class AWSVault {
       const output = await this.client.send(command);
       secretString = output.SecretString;
     } catch (error) {
-      throw new ValtError(`Failed to get secret: ${this.secret}`, {
-        debug: error instanceof Error ? error.message : undefined,
-        hint: "Check if the secret exists in AWS Secrets Manager and if you have the right permissions.",
-      });
+      if (error instanceof ResourceNotFoundException) {
+        secretString = "{}";
+      } else {
+        throw new ValtError(`Failed to get secret: ${this.secret}`, {
+          debug: error instanceof Error ? error.message : undefined,
+          hint: "Check if the secret exists in AWS Secrets Manager and if you have the right permissions.",
+        });
+      }
     }
 
     if (!secretString) {

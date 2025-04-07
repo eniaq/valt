@@ -28,12 +28,12 @@ export class Resolver {
     const globalVaults = this.resolveGlobalVaults();
     const vaults = [...(globalVaults ?? []), ...(localVaults ?? [])];
 
-    var awsSecret: string | undefined = undefined;
-    var awsKey: string = env;
-    var awsEnabled = true;
-    var dotenvFile: string | undefined = undefined;
-    var dotenvVariable: string = env;
-    var dotenvEnabled = true;
+    let awsSecret: string | undefined = undefined;
+    let awsKey: string = env;
+    let awsEnabled = true;
+    let dotenvFile: string | undefined = undefined;
+    let dotenvVariable: string = env;
+    let dotenvEnabled = true;
 
     for (const vault of vaults) {
       if (vault.provider === "aws") {

@@ -12,8 +12,11 @@ export class App {
 
     let resolver = new Resolver(config, options);
 
-    var values: VaultValue[] = [];
+    let values: VaultValue[] = [];
 
+    let missingValues: string[] = [];
+
+    let awsError: unknown;
     for (const name of resolver.envs) {
       const { aws, dotenv, defaultValue, policy } = resolver.resolveVault(name);
 
@@ -30,9 +33,7 @@ export class App {
           values.push(await aws.getValue());
           continue;
         } catch (error) {
-          if (policy === "required") {
-            throw error;
-          }
+          awsError = error;
         }
       }
 
@@ -45,30 +46,20 @@ export class App {
         continue;
       }
 
-      const envValue = process.env[name];
-      if (envValue) {
-        values.push({
-          type: "env",
-          name: name,
-          value: envValue,
-        });
-        continue;
-      }
-
       if (policy === "required") {
-        throw new ValtError(
-          `The value for '${name}' is required but could not be found.`,
-          {
-            hint: "Ensure your configuration file and secrets manager are set up correctly.",
-          }
-        );
+        values.push({
+          type: "error",
+          name: name,
+          value: undefined,
+        });
+        missingValues.push(name);
+      } else {
+        values.push({
+          type: "empty",
+          name: name,
+          value: undefined,
+        });
       }
-
-      values.push({
-        type: "empty",
-        name: name,
-        value: undefined,
-      });
     }
 
     if (options.format === "table") {
@@ -79,6 +70,16 @@ export class App {
       Printer.printTable(values, resolver.profile, options.show ?? false);
     } else {
       Printer.printDotenv(values);
+    }
+
+    if (missingValues.length > 0) {
+      throw new ValtError(
+        `Missing required values: [${missingValues.join(", ")}]`,
+        {
+          hint: "Check if the AWS secret exists and the key is correct.",
+          debug: awsError instanceof Error ? awsError.message : undefined,
+        }
+      );
     }
   }
 
@@ -103,6 +104,9 @@ export class App {
       throw new ValtError(`No aws provider and secret found for ${name}`);
     }
 
-    await aws.setValue(value);
+    await aws.setValue(value, {
+      before: options.show ?? false,
+      after: options.show ?? (options.file ? false : true),
+    });
   }
 }

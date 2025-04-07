@@ -2,7 +2,7 @@
 
 import { Option, program } from "commander";
 import { readFileSync } from "fs";
-import { join } from "path";
+import path, { join } from "path";
 import { App } from "./app";
 import { Log } from "./logger";
 import { ValtError } from "./error";
@@ -11,7 +11,7 @@ const packageJson = JSON.parse(
   readFileSync(join(__dirname, "../package.json"), "utf-8")
 );
 
-const { name, version } = packageJson;
+const { version } = packageJson;
 
 const runner = async (block: () => void | Promise<void>) => {
   try {
@@ -35,7 +35,7 @@ const runner = async (block: () => void | Promise<void>) => {
 };
 
 program
-  .name(name)
+  .name(path.basename(process.argv[1]))
   .description("Manage secrets and parameters with AWS Secrets Manager.")
   .version(version);
 
@@ -64,17 +64,23 @@ program
 export type SetOptions = {
   config?: string;
   profile?: string;
-  name: string;
-  value?: string;
   file?: string;
+  show?: boolean;
 };
 
 program
-  .command("set <name> [value]")
+  .command("set")
+  .description("Set a value")
+  .argument("<name>", "name of the value")
+  .argument("[value]", "value to set")
   .option("-c, --config <config>", "path to the config file")
   .option("-p, --profile <profile>", "profile name")
   .option("--file <file>", "read value from file")
+  .option("-s, --show", "show secrets")
   .action((name: string, value: string | undefined, options: SetOptions) => {
+    options["profile"] = program.opts()["profile"];
+    options["config"] = program.opts()["config"];
+    options["show"] = program.opts()["show"];
     runner(async () => {
       await App.set(name, value ?? null, options);
     });
