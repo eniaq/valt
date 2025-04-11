@@ -16,7 +16,7 @@ export class App {
 
     let missingValues: string[] = [];
 
-    let awsError: unknown;
+    let awsErrorDebugString: string | undefined = undefined;
     for (const name of resolver.envs) {
       const { aws, dotenv, defaultValue, required } =
         resolver.resolveVault(name);
@@ -34,7 +34,11 @@ export class App {
           values.push(await aws.getValue());
           continue;
         } catch (error) {
-          awsError = error;
+          if (error instanceof Error) {
+            awsErrorDebugString = error.stack ??  error.message;
+          } else {
+            awsErrorDebugString = String(error);
+          }
         }
       }
 
@@ -78,7 +82,7 @@ export class App {
         `Missing required values: [${missingValues.join(", ")}]`,
         {
           hint: "Check if the AWS secret exists and the key is correct.",
-          debug: awsError instanceof Error ? awsError.message : undefined,
+          debug: awsErrorDebugString,
         }
       );
     }
