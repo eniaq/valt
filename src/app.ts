@@ -77,8 +77,8 @@ export class App {
       throw new ValtError(
         `Missing required values: [${missingValues.join(", ")}]`,
         {
-          hint: "Check if the AWS secret exists and the key is correct.",
-          debug: awsError instanceof Error ? awsError.message : undefined,
+          hint: awsError instanceof ValtError ? awsError.hint : undefined,
+          debug: awsError instanceof ValtError ? awsError.debug : undefined,
         }
       );
     }
